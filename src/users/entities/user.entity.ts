@@ -8,6 +8,6 @@ export class User {
   @Column()
   userAgent: string;
 
-  @Column()
-  ipAddress: string;
+  @Column('text')
+  ipAddress: any;
 }

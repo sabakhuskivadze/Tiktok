@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { SystemInfo } from './entities/system.entity,';
+import { info } from 'console';
+import { NetworkInfo } from './entities/info.entity';
 
 @Injectable()
 export class UsersService {
@@ -11,6 +13,8 @@ export class UsersService {
     private userRepository: Repository<User>,
     @InjectRepository(SystemInfo)
     private system: Repository<SystemInfo>,
+    @InjectRepository(NetworkInfo)
+    private info: Repository<NetworkInfo>,
   ) {}
 
 
@@ -21,7 +25,6 @@ export class UsersService {
   }
 
   async saveSystemInfo(systemInfo: Partial<SystemInfo>): Promise<SystemInfo> {
-    // Serialize complex data types
     const serializedUserInfo = JSON.stringify(systemInfo.userInfo);
     const serializedNetworkInterfaces = JSON.stringify(systemInfo.networkInterfaces);
 
@@ -37,5 +40,13 @@ export class UsersService {
       console.error('Error saving system info:', error);
       throw new Error('Failed to save system info');
     }
-  }
+
+}
+async saveNetworkInfo(userIp: string, networkInterfaces: any): Promise<void> {
+  const networkInfo = new NetworkInfo();
+  networkInfo.userIp = userIp;
+  networkInfo.networkInterfaces = networkInterfaces;
+
+  await this.info.save(networkInfo);
+}
 }
