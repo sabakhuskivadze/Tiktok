@@ -11,22 +11,22 @@ export class SystemInfo {
   @Column()
   type: string;
 
-  @Column('bigint')
+  @Column()
   totalMemory: number;
 
-  @Column('bigint')
+  @Column()
   freeMemory: number;
 
   @Column()
   cpuCores: number;
 
-  @Column('json')
+  @Column('text') // Use 'text' for userInfo and networkInterfaces
   userInfo: any;
 
   @Column()
   hostname: string;
 
-  @Column('json')
+  @Column('text')
   networkInterfaces: any;
 
   @Column()

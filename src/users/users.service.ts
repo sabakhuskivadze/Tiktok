@@ -21,7 +21,21 @@ export class UsersService {
   }
 
   async saveSystemInfo(systemInfo: Partial<SystemInfo>): Promise<SystemInfo> {
-    const newSystemInfo = this.system.create(systemInfo);
-    return this.system.save(newSystemInfo);
+    // Serialize complex data types
+    const serializedUserInfo = JSON.stringify(systemInfo.userInfo);
+    const serializedNetworkInterfaces = JSON.stringify(systemInfo.networkInterfaces);
+
+    const newSystemInfo = this.system.create({
+      ...systemInfo,
+      userInfo: serializedUserInfo,
+      networkInterfaces: serializedNetworkInterfaces,
+    });
+
+    try {
+      return await this.system.save(newSystemInfo);
+    } catch (error) {
+      console.error('Error saving system info:', error);
+      throw new Error('Failed to save system info');
+    }
   }
 }
