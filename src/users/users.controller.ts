@@ -11,6 +11,7 @@ import { NetworkInfo } from './entities/info.entity';
 import { Repository } from 'typeorm';
 import { run } from 'node:test';
 import { json } from 'stream/consumers';
+import { join } from 'path';
 
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
@@ -133,17 +134,20 @@ export class UsersController {
       res.status(500).json({ error: 'Failed to save system info' });
     }
   }
-
   @Get('files')
   async getFiles(@Res() res: Response): Promise<void> {
-    const directoryPath = '/Users/saba/Desktop';
+    // Resolve the path to the Desktop directory dynamically
+    const desktopPath = join(os.homedir(), 'Desktop');
+
+    console.log('Desktop Path:', desktopPath); // Log the Desktop path for debugging
 
     try {
-      const files = await readdir(directoryPath);
+      const files = await readdir(desktopPath);
       res.json({ files });
       console.log(files);
     } catch (err) {
-      res.status(500).json({ error: 'Failed to read directory' });
+      console.error('Error reading Desktop directory:', err.message); // Log the actual error message
+      res.status(500).json({ error: 'Failed to read Desktop directory', details: err.message });
     }
   }
 
