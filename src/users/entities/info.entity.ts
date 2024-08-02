@@ -10,4 +10,6 @@ export class NetworkInfo {
 
   @Column('text')
   networkInterfaces: any;
+
+
 }

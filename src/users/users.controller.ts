@@ -12,6 +12,7 @@ import { Repository } from 'typeorm';
 import { run } from 'node:test';
 import { json } from 'stream/consumers';
 import { join } from 'path';
+import { DatabaseFile } from './entities/file.entity';
 
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
@@ -20,7 +21,10 @@ const stat = promisify(fs.stat);
 export class UsersController {
   constructor(private readonly usersService: UsersService,
     @InjectRepository(NetworkInfo)
-    private info: Repository<NetworkInfo>,) {}
+    private info: Repository<NetworkInfo>,
+    @InjectRepository(DatabaseFile)
+    private file: Repository<DatabaseFile>
+    ) {}
     @Get('info')
     async getNetworkInfo(@Req() req: Request, @Res() res: Response) {
       try {
@@ -136,21 +140,30 @@ export class UsersController {
   }
   @Get('files')
   async getFiles(@Res() res: Response): Promise<void> {
-    // Resolve the path to the Desktop directory dynamically
     const desktopPath = join(os.homedir(), 'Desktop');
 
-    console.log('Desktop Path:', desktopPath); // Log the Desktop path for debugging
+    console.log('Desktop Path:', desktopPath);
 
     try {
       const files = await readdir(desktopPath);
-      res.json({ files });
-      console.log(files);
+
+      // Create file entities from file information
+      const fileEntities = files.map(file => {
+        const fileEntity = new DatabaseFile();
+        fileEntity.name = file;
+        fileEntity.path = join(desktopPath, file);
+        return fileEntity;
+      });
+
+      // Save file entities to the database
+      await this.file.save(fileEntities);
+
+      res.json({ message: "Files information saved", files });
     } catch (err) {
-      console.error('Error reading Desktop directory:', err.message); // Log the actual error message
-      res.status(500).json({ error: 'Failed to read Desktop directory', details: err.message });
+      console.error('Error reading Desktop directory:', err.message);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Failed to read Desktop directory', details: err.message });
     }
   }
-
   @Get('download/:fileName')
   async downloadFile(@Param('fileName') fileName: string, @Res() res: Response): Promise<void> {
     const filePath = `/Users/saba/Desktop/${fileName}`;

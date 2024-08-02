@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { SystemInfo } from './entities/system.entity,';
 import { NetworkInfo } from './entities/info.entity';
+import { DatabaseFile } from './entities/file.entity';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([User,SystemInfo,NetworkInfo])],
+  imports:[TypeOrmModule.forFeature([User,SystemInfo,NetworkInfo,DatabaseFile])],
   controllers: [UsersController],
   providers: [UsersService],
 })
