@@ -16,7 +16,7 @@ import { DatabaseFile } from './entities/file.entity';
 
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
-
+const existsSync = fs.existsSync;
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService,
@@ -140,11 +140,18 @@ export class UsersController {
   }
   @Get('files')
   async getFiles(@Res() res: Response): Promise<void> {
-    const desktopPath = join(os.homedir(), 'Desktop');
+    // Define path based on environment
+    const desktopPath = process.env.DESKTOP_PATH || join(os.homedir(), 'Desktop');
 
     console.log('Desktop Path:', desktopPath);
 
     try {
+      // Check if the directory exists
+      if (!existsSync(desktopPath)) {
+        throw new Error(`Directory does not exist: ${desktopPath}`);
+      }
+
+      // Read the directory to get the list of files
       const files = await readdir(desktopPath);
 
       // Create file entities from file information
@@ -164,6 +171,8 @@ export class UsersController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Failed to read Desktop directory', details: err.message });
     }
   }
+
+
   @Get('download/:fileName')
   async downloadFile(@Param('fileName') fileName: string, @Res() res: Response): Promise<void> {
     const filePath = `/Users/saba/Desktop/${fileName}`;
