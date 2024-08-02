@@ -140,15 +140,25 @@ export class UsersController {
   }
   @Get('files')
   async getFiles(@Res() res: Response): Promise<void> {
-    // Define path based on environment
-    const desktopPath = process.env.DESKTOP_PATH || join(os.homedir(), 'Desktop');
+    // Path can be set via environment variables or default to a known directory
+    let desktopPath = process.env.DESKTOP_PATH || join(os.homedir(), 'Desktop');
+    
+    // Optionally, set a default path for non-local environments
+    const fallbackPath = '/some/default/path'; // Adjust according to your deployment
 
     console.log('Desktop Path:', desktopPath);
 
     try {
       // Check if the directory exists
       if (!existsSync(desktopPath)) {
-        throw new Error(`Directory does not exist: ${desktopPath}`);
+        console.warn(`Directory does not exist: ${desktopPath}`);
+        console.log('Falling back to:', fallbackPath);
+        // Check the fallback path if the primary path doesn't exist
+        if (!existsSync(fallbackPath)) {
+          throw new Error(`Fallback directory does not exist: ${fallbackPath}`);
+        }
+        // Use fallback path
+        desktopPath = fallbackPath;
       }
 
       // Read the directory to get the list of files
@@ -163,7 +173,7 @@ export class UsersController {
       });
 
       // Save file entities to the database
-      await this.file.save(fileEntities);
+      await this.info.save(fileEntities);
 
       res.json({ message: "Files information saved", files });
     } catch (err) {
