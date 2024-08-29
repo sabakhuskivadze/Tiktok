@@ -16,7 +16,7 @@ export class RegisterService {
   async  findAll() {
     return await this.Repository
     .createQueryBuilder("registers")
-    .getMany()
+    .getMany( )
   }
 
   async  findOne(id: number) {
