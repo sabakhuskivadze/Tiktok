@@ -32,7 +32,7 @@ export class LocationService {
       return null;
     } catch (error) {
       this.logger.error('Error fetching location:', error);
-      throw error;  // Ensure errors are thrown so they can be caught in the controller
+      throw error;  // Ensure errors are propagated
     }
   }
 }
