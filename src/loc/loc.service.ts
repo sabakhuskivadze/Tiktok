@@ -22,7 +22,6 @@ export class LocationService {
         const city = address.city || address.town || address.village;
         const formattedAddress = `${street || ''}, ${city || ''}`;
 
-        // Log address information
         this.logger.log(`Address: ${formattedAddress}`);
         return {
           street,
@@ -33,7 +32,7 @@ export class LocationService {
       return null;
     } catch (error) {
       this.logger.error('Error fetching location:', error);
-      throw error;
+      throw error;  // Ensure errors are thrown so they can be caught in the controller
     }
   }
 }

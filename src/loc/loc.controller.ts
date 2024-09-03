@@ -18,7 +18,7 @@ export class LocationController {
       const address = await this.locationService.getAddress(latitude, longitude);
       if (address) {
         const { street, city, formattedAddress } = address;
-        console.log(`Address: ${formattedAddress}`); // Log address information
+        console.log(`Address: ${formattedAddress}`);
         return {
           address: formattedAddress,
           street,
@@ -30,7 +30,7 @@ export class LocationController {
         throw new HttpException('Location not found', HttpStatus.NOT_FOUND);
       }
     } catch (error) {
-      console.error('Error fetching location:', error); // Log error
+      console.error('Error fetching location:', error);
       throw new HttpException('Error fetching location', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
