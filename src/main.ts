@@ -13,6 +13,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors()
-  await app.listen(3001);
+  await app.listen(3003);
 }
 bootstrap();

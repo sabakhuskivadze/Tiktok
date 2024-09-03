@@ -1,34 +1,37 @@
-import { Body, Controller, Post, Res, HttpStatus } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { LocationService } from './loc.service';
 
-@Controller("l")
+@Controller('l')
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
   @Post('/save')
-  async saveLocation(@Body() body: { latitude: number; longitude: number }, @Res() res: Response) {
+  @HttpCode(HttpStatus.OK)
+  async saveLocation(@Body() body: { latitude: number; longitude: number }) {
     const { latitude, longitude } = body;
+
     if (!latitude || !longitude) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Invalid data' });
+      throw new HttpException('Invalid data', HttpStatus.BAD_REQUEST);
     }
 
     try {
       const address = await this.locationService.getAddress(latitude, longitude);
       if (address) {
         const { street, city, formattedAddress } = address;
-        res.status(HttpStatus.OK).json({
+        console.log(`Address: ${formattedAddress}`); // Log address information
+        return {
           address: formattedAddress,
           street,
           city,
           latitude,
           longitude
-        });
+        };
       } else {
-        res.status(HttpStatus.NOT_FOUND).json({ error: 'Location not found' });
+        throw new HttpException('Location not found', HttpStatus.NOT_FOUND);
       }
     } catch (error) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error fetching location' });
+      console.error('Error fetching location:', error); // Log error
+      throw new HttpException('Error fetching location', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
