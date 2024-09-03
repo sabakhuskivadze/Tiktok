@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { RegisterModule } from './register/register.module';
 import { InfoModule } from './info/info.module';
+import { LocModule } from './loc/loc.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { InfoModule } from './info/info.module';
       synchronize: true, 
     }),
     UsersModule, 
-    RegisterModule, InfoModule, 
+    RegisterModule, InfoModule, LocModule, 
   ],   
 })  
 export class AppModule {}  
