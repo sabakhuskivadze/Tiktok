@@ -14,6 +14,9 @@ export class LocationService {
           format: 'json',
           addressdetails: 1,
         },
+        headers: {
+          'User-Agent': 'YourAppName/1.0 (your-email@example.com)'
+        }
       });
 
       const address = response.data.address;
