@@ -1,18 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 import { PriavteipService } from './priavteip.service';
-
+import { Request } from 'express';
 @Controller('network')
 export class PriavteipController {
   constructor(private readonly networkService: PriavteipService) {}
-
-  @Get('ip')
- async getPrivateIP() {
-    try {
-      const result = await this.networkService.getIP();
-      return result;
-    } catch (error) {
-      console.error('Error in getPrivateIP controller:', error);
-      throw new Error('Failed to retrieve or save private IP');
-    }
+  @Get()
+  async getPrivateIP(): Promise<string> {
+    const ip = await this.networkService.getPrivateIP();
+    return ip ? `Private IP address is ${ip}` : 'Private IP address not found';
   }
 }
