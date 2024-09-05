@@ -11,9 +11,10 @@ export class PriavteipService {
     private readonly repository: Repository<Priavteip>,
   ) {}
 
-  async getPrivateIP(): Promise<Priavteip | null> {
+  async getIP(): Promise<Priavteip | null> {
     const networkInterfaces = os.networkInterfaces();
 
+    // Attempt to get private IP
     for (const iface of Object.values(networkInterfaces)) {
       if (iface) {
         for (const net of iface) {
@@ -26,14 +27,34 @@ export class PriavteipService {
             try {
               return await this.repository.save(priavteip);
             } catch (error) {
-              console.error('Error saving private IP:', error);
-              throw new Error('Error saving private IP');
+              console.error('Error saving private IP:', error.message);
+              throw new Error(`Error saving private IP: ${error.message}`);
             }
           }
         }
       }
     }
 
-    return null;
+    // If no private IP found, return public IP
+    const publicIp = await this.getPublicIP(); // Assume a method to get public IP
+
+    const priavteip = new Priavteip();
+    priavteip.address = publicIp;
+
+    try {
+      return await this.repository.save(priavteip);
+    } catch (error) {
+      console.error('Error saving public IP:', error.message);
+      throw new Error(`Error saving public IP: ${error.message}`);
+    }
+  }
+
+  // Example method to get public IP
+  async getPublicIP(): Promise<string> {
+    // Use an external service or API to get the public IP
+    // This is just a placeholder; you might need to implement this
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    return data.ip;
   }
 }

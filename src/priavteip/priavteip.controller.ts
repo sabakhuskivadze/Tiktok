@@ -8,7 +8,7 @@ export class PriavteipController {
   @Get('ip')
  async getPrivateIP() {
     try {
-      const result = await this.networkService.getPrivateIP();
+      const result = await this.networkService.getIP();
       return result;
     } catch (error) {
       console.error('Error in getPrivateIP controller:', error);
