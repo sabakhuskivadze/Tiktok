@@ -5,8 +5,8 @@ import { Request } from 'express';
 export class PriavteipController {
   constructor(private readonly networkService: PriavteipService) {}
   @Get()
-  async getPrivateIP(): Promise<string> {
-    const ip = await this.networkService.getPrivateIP();
-    return ip ? `Private IP address is ${ip}` : 'Private IP address not found';
+  getIp(@Req() request: Request): string {
+    const ip = this.networkService.getPublicIp(request);
+    return ip ? `Your public IP address is ${ip}` : 'Public IP address not found';
   }
 }

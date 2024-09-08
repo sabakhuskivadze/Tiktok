@@ -13,27 +13,11 @@ export class PriavteipService {
     private readonly repository: Repository<Priavteip>,
   ) {}
 
-  async getPrivateIP(): Promise<string | null> {
-    try {
-      // Execute the command
-      const { stdout, stderr } = await execPromise('ifconfig | grep "inet " | grep -v 127.0.0.1');
-      
-      if (stderr) {
-        console.error('Error executing command:', stderr);
-        return null;
-      }
-
-      // Process the output
-      const lines = stdout.trim().split('\n');
-      if (lines.length > 0) {
-        // Return the first non-loopback IP address
-        return lines[0].split(' ')[1];
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error running command:', error.message);
-      return null;
-    }
+  getPublicIp(request: Request): string | null {
+    // Retrieve the public IP address from headers
+    const ip = request.headers['x-forwarded-for'] || request.connection.remoteAddress;
+    
+    // Convert to string and return
+    return typeof ip === 'string' ? ip.split(',')[0].trim() : null;
   }
 }
