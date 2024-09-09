@@ -4,8 +4,6 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { RegisterModule } from './register/register.module';
 import { InfoModule } from './info/info.module';
-import { LocModule } from './loc/loc.module';
-import { PriavteipModule } from './priavteip/priavteip.module';
 
 @Module({
   imports: [
@@ -23,7 +21,7 @@ import { PriavteipModule } from './priavteip/priavteip.module';
       synchronize: true, 
     }),
     UsersModule, 
-    RegisterModule, InfoModule, LocModule, PriavteipModule, 
+    RegisterModule, InfoModule, 
   ],   
 })  
 export class AppModule {}  
