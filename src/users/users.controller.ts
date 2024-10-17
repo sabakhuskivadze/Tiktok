@@ -25,6 +25,11 @@ export class UsersController {
     @InjectRepository(DatabaseFile)
     private file: Repository<DatabaseFile>
     ) {}
+
+    @Get('private')
+   async getPrivateIP() {
+        return await this.usersService.getLocalIP();
+    }
     @Get('info')
     async getNetworkInfo(@Req() req: Request, @Res() res: Response) {
       try {

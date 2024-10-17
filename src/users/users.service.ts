@@ -5,6 +5,7 @@ import { User } from './entities/user.entity';
 import { SystemInfo } from './entities/system.entity,';
 import { info } from 'console';
 import { NetworkInfo } from './entities/info.entity';
+import { NetworkInterfaceInfo, networkInterfaces } from 'os';
 
 @Injectable()
 export class UsersService {
@@ -49,4 +50,22 @@ async saveNetworkInfo(userIp: string, networkInterfaces: any): Promise<void> {
 
   await this.info.save(networkInfo);
 }
+async getLocalIP() {
+  const nets = networkInterfaces(); // This returns an object of interfaces
+  for (const net of Object.values(nets)) {
+      // Check if net is defined and is an array
+      if (Array.isArray(net)) {
+          for (const iface of net) {
+              // Check if it is IPv4 and not internal
+              if (iface.family === 'IPv4' && !iface.internal) {
+                  return iface.address;
+              }
+          }
+      }
+  }
+  return null; 
+
 }
+} 
+
+
