@@ -46,3 +46,4 @@ export class FilesPhotoService {
     return `This action removes a #${id} filesPhoto`;
   }
 }
+ 
